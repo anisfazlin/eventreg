@@ -27,7 +27,7 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                sh 'docker run -d -p 8080:8080 event-app'
+                sh 'docker run -d -p 8080:8080 eventreg-app'
             }
         }
     }
