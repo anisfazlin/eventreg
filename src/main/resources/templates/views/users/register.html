@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/MainLayout}">
+<head>
+    <title>Register for Event</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h2 th:text="'Register for ' + ${event.name}">Register</h2>
+
+
+    <form th:action="@{/user/events/register/{eventId}/{username}(eventId=${event.id}, username=${username})}"
+          th:object="${registrationForm}" method="post">
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" th:field="*{name}" id="name" placeholder="Enter your name" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="Enter your e-mail" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" th:field="*{phoneNumber}" id="phoneNumber" placeholder="Enter your phone Number" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+        </div>
+
+        <div th:each="dto, iterStat : *{answers}" class="mb-3">
+            <label th:text="${event.questions[iterStat.index].text}" class="form-label">Question</label>
+            <input type="hidden" th:field="*{answers[__${iterStat.index}__].questionId}" />
+            <input type="text" th:field="*{answers[__${iterStat.index}__].response}" class="form-control" required/>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a href="/user/events/index' + ${username}}" class="btn btn-secondary">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

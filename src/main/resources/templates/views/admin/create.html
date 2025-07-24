@@ -1,0 +1,215 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{layouts/MainLayout}">-->
+<!--<head>-->
+<!--    <title>Create Event</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>-->
+<!--</head>-->
+<!--<body>-->
+<!--<main layout:fragment="content" class="container mt-4">-->
+<!--    <h2 th:text="${event.id} != null ? 'Edit Event' : 'Create Event'"></h2>-->
+
+<!--    <form th:action="@{/admin/events/save}" th:object="${event}" method="post">-->
+
+<!--        <input type="hidden" th:if="${event.id != null}" th:field="*{id}" />-->
+
+<!--        <div class="mb-3">-->
+<!--            <label for="name" class="form-label">Event Name</label>-->
+<!--            <input type="text" class="form-control" th:field="*{name}" id="name" required />-->
+<!--        </div>-->
+
+<!--        <div class="mb-3">-->
+<!--            <label class="form-label">Event Category</label>-->
+<!--            <select id="type" name="eventTypeId" class="form-select" required>-->
+<!--                <option value="">&#45;&#45; Select Event Type &#45;&#45;</option>-->
+<!--                <option th:each="type : ${eventTypes}"-->
+<!--                        th:value="${type.id}"-->
+<!--                        th:text="${type.name}"-->
+<!--                        th:selected="${event.eventType?.id} == ${type.id}">-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <div class="text-danger" th:if="${#fields.hasErrors('eventType')}" th:errors="*{eventType}"></div>-->
+
+<!--        <div class="mb-3">-->
+<!--            <label for="venue" class="form-label">Venue</label>-->
+<!--            <input type="text" class="form-control" th:field="*{venue}" id="venue" required />-->
+<!--        </div>-->
+
+<!--        <div class="mb-3">-->
+<!--            <label for="start_date" class="form-label">Start Date</label>-->
+<!--            <input type="date" class="form-control" th:field="*{start_date}" id="start_date" required />-->
+<!--        </div>-->
+
+<!--        <div class="mb-3">-->
+<!--            <label for="end_date" class="form-label">End Date</label>-->
+<!--            <input type="date" class="form-control" th:field="*{end_date}" id="end_date" required />-->
+<!--        </div>-->
+
+<!--        <h5>Assigned Questions</h5>-->
+<!--        <table class="table" id="questionTable">-->
+<!--            <thead>-->
+<!--            <tr><th>Question</th><th>Action</th></tr>-->
+<!--            </thead>-->
+<!--            <tbody id="questionsBody">-->
+<!--            <tr><td colspan="3" class="text-center">Select a category to load questions.</td></tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+
+<!--        <button type="submit" class="btn btn-success">Save</button>-->
+<!--        <a href="/admin/events/index" class="btn btn-secondary">Cancel</a>-->
+<!--    </form>-->
+<!--</main>-->
+
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const eventTypeSelect = document.getElementById("type");-->
+<!--        const questionsBody = document.getElementById("questionsBody");-->
+
+<!--        eventTypeSelect.addEventListener("change", function () {-->
+<!--            const typeId = eventTypeSelect.value;-->
+<!--            questionsBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";-->
+
+<!--            if (!typeId) return;-->
+
+<!--            fetch(`/admin/events/questions/by-category?eventTypeId=${typeId}`)-->
+<!--                .then(response => response.json())-->
+<!--                .then(questions => {-->
+<!--                    questionsBody.innerHTML = "";-->
+<!--                    if (questions.length === 0) {-->
+<!--                        questionsBody.innerHTML = "<tr><td colspan='2'>No questions found for this type.</td></tr>";-->
+<!--                    } else {-->
+<!--                        questions.forEach(q => {-->
+<!--                            const row = document.createElement("tr");-->
+<!--                            row.innerHTML = `-->
+<!--                                <td>${q.text}</td>-->
+<!--                                <td><button class="btn btn-danger btn-sm" onclick="deleteQuestion('${q.id}', '${q.eventId}', this)">Delete</button></td>-->
+<!--                            `;-->
+<!--                            questionsBody.appendChild(row);-->
+<!--                        });-->
+<!--                    }-->
+<!--                });-->
+<!--        });-->
+<!--    });-->
+
+<!--    function deleteQuestion(questionId, eventId, btn) {-->
+<!--        fetch(`/admin/events/${eventId}/questions/${questionId}/delete`, {-->
+<!--            method: 'POST'-->
+<!--        }).then(res => {-->
+<!--            if (res.ok) {-->
+<!--                const row = btn.closest("tr");-->
+<!--                row.remove();-->
+<!--            } else {-->
+<!--                alert("Could not delete question.");-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/MainLayout}">
+<head>
+    <title>Create Event</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <h2>Create Event</h2>
+
+    <form th:action="@{/admin/events/select-questions}" th:object="${event}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Event Name</label>
+            <input type="text" class="form-control" th:field="*{name}" id="name" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Event Category</label>
+            <div class="d-flex gap-2">
+                <select id="eventTypeId" name="eventTypeId" class="form-select" required>
+                    <option value="">-- Select Event Type --</option>
+                    <option th:each="type : ${eventTypes}"
+                            th:value="${type.id}"
+                            th:text="${type.name}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="venue" class="form-label">Venue</label>
+            <input type="text" class="form-control" th:field="*{venue}" id="venue" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" class="form-control" th:field="*{start_date}" id="start_date" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" class="form-control" th:field="*{end_date}" id="end_date" required />
+        </div>
+
+        <button type="submit" class="btn btn-success">Next: Select Questions</button>
+        <a href="/admin/events/index" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    <!-- Add Event Type Modal
+    <div class="modal fade" id="addEventTypeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Event Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventTypeForm">
+                        <div class="mb-3">
+                            <label for="eventTypeName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="eventTypeName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventTypeDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="eventTypeDescription" name="description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventTypeModal">+ New Type</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- Add Event Type Modal -->
+
+<!-- <script>
+function saveEventType() {
+    const form = document.getElementById('eventTypeForm');
+    const formData = new FormData(form);
+    
+    fetch('/admin/events/add-event-type', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result.startsWith('success:')) {
+            // Refresh the event type dropdown
+            location.reload();
+        } else {
+            alert(result.substring(6));
+        }
+    })
+    .catch(error => {
+        alert('Error saving event type');
+    });
+}
+</script> -->
+</body>
+</html>

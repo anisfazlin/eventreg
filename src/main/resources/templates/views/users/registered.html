@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/MainLayout}">
+<head>
+    <title>My Registered Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📋 My Registered Events</h2>
+        <div>
+            <a th:href="@{/user/events/index/{username}(username=${username})}" class="btn btn-primary">Browse More Events</a>
+            <a th:href="@{/login}" class="btn btn-outline-secondary">Back to Login</a>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(registrations)}" class="alert alert-info">
+        <h5>No registrations found</h5>
+        <p>You haven't registered for any events yet. <a th:href="@{/user/events/index/{username}(username=${username})}">Browse available events</a> to get started!</p>
+    </div>
+
+    <div class="row g-4" th:if="${!#lists.isEmpty(registrations)}">
+        <div th:each="registration : ${registrations}" class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-2" th:text="${registration.event.name}">Event Title</h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="bi bi-geo-alt"></i> <span th:text="${registration.event.venue}">Venue</span><br>
+                            <i class="bi bi-calendar"></i> <span th:text="${registration.event.start_date}">Start Date</span> - <span th:text="${registration.event.end_date}">End Date</span><br>
+                            <i class="bi bi-tag"></i> <span th:text="${registration.event.eventType.name}">Event Type</span>
+                        </small>
+                    </p>
+                    <hr>
+                    <h6>Registration Details:</h6>
+                    <p class="small">
+                        <strong>Name:</strong> <span th:text="${registration.name}">Name</span><br>
+                        <strong>Email:</strong> <span th:text="${registration.email}">Email</span><br>
+                        <strong>Phone:</strong> <span th:text="${registration.phoneNumber}">Phone</span><br>
+                        <strong>Registered:</strong> <span th:text="${#temporals.format(registration.registeredAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+                    </p>
+                    
+                    <div th:if="${!#lists.isEmpty(registration.answers)}">
+                        <h6>Your Answers:</h6>
+                        <div th:each="answer : ${registration.answers}" class="small mb-1">
+                            <strong>Q:</strong> <span th:text="${answer.questionText}">Question</span><br>
+                            <strong>A:</strong> <span th:text="${answer.response}">Answer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</body>
+</html>
