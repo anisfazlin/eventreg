@@ -23,7 +23,7 @@
 
                     <form th:action="@{/login}" th:object="${loginDTO}" method="post">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label">Username pls</label>
                             <input type="text" class="form-control" id="username" th:field="*{username}" required>
                             <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
                         </div>
